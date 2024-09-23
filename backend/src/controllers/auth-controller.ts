@@ -4,18 +4,18 @@ import User from "../models/user.model";
 
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      res.status(400).json({ message: "Хоосон утга байж болохгүй." });
+    const { firstname, lastname, email, password } = req.body;
+    if (!firstname || !lastname || !email || !password) {
+      return res.status(400).json({ message: "Хоосон утга байж болохгүй." });
     }
     const createdUser = await User.create({
-      name,
+      firstname,
+      lastname,
       email,
       password,
-      phoneNumber: "",
     });
 
-    res.status(201).json({ message: "sucess", user: createdUser });
+    res.status(201).json({ message: "create user is sucessfull" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error });
   }
