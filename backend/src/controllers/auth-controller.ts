@@ -1,6 +1,9 @@
 // MONGOOSE => ODM => Object Data Mapping
 import { Request, Response } from "express";
+
+import bcrypt from "bcrypt";
 import User from "../models/user.model";
+import { generateToken } from "../utils/jwt";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -21,6 +24,34 @@ export const signup = async (req: Request, res: Response) => {
   }
 };
 
-export const login = (req: Request, res: Response) => {
-  res.status(200).json({ message: "Login Success" });
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Хоосон утга байж болохгүй." });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "Бүртгэлтэй хэрэглэгч олдсонгүй" });
+    } else {
+      const isCheck = bcrypt.compareSync(password, user.password.toString());
+      if (!isCheck) {
+        return res.status(400).json({
+          message: "Хэрэглэгчийн имэйл эсвэл нууц үг тохирохгүй байна.",
+        });
+      } else {
+        const token = generateToken({ id: user._id });
+        res.status(200).json({
+          message: "success",
+          token,
+        });
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ message: "Client error" });
+  }
 };
