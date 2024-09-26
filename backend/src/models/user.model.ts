@@ -1,3 +1,4 @@
+// MONGOOSE => ODM => Object Data Mapping
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
 
@@ -11,6 +12,9 @@ interface IUser {
   role: String;
   profile_img: String;
   address: String;
+  otp: String;
+  passwordResetToken: String;
+  passwordResetTokenExpire: Date;
   updated_at: Date;
   created_at: Date;
 }
@@ -46,6 +50,10 @@ const userSchema = new Schema<IUser>({
       "https://images.unsplash.com/photo-1640951613773-54706e06851d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   address: String,
+  otp: { type: String, default: "" },
+  passwordResetToken: { type: String, default: "" },
+  passwordResetTokenExpire: { type: Date, default: undefined },
+
   updated_at: {
     type: Date,
     default: Date.now,

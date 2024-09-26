@@ -13,14 +13,13 @@ import { useState, useEffect } from "react";
 const Otp = () => {
   const router = useRouter();
   const [countDown, setCountDown] = useState(30);
-  const [otpValue, setOtpValue] = useState("");
+  const [otpValue, setOtpValue] = useState("12");
 
   useEffect(() => {
     if (countDown > 0) {
       const countdown = setInterval(() => {
         setCountDown((prevSeconds) => prevSeconds - 1);
       }, 1000);
-
       return () => clearInterval(countdown);
     }
   }, [countDown]);

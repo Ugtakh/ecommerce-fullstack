@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import express, { Request, Response } from "express";
-import authRoute from "./routes/auth-route";
+import cors from "cors";
+
 import { connectDB } from "./config/db";
-import { generateHtmlTemplate } from "./utils/generateHtmlTemplate";
-import { sendEmail } from "./utils/send-email";
+import authRoute from "./routes/auth-route";
+import categoryRoute from "./routes/category-route";
 
 const PORT: string = process.env.PORT || "";
 const MONGO_URI = process.env.MONGO_URI || "";
@@ -14,18 +14,17 @@ const MONGO_URI = process.env.MONGO_URI || "";
 const app = express();
 
 //middlewares
+app.use(cors());
 app.use(express.json());
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/categories", categoryRoute);
 
+// home request
 app.get("/", async (req: Request, res: Response) => {
-  // const rndOtp = Math.floor(Math.random() * 10_000)
-  //   .toString()
-  //   .padStart(4, "0");
-  // sendEmail("ugtakhbayar.pico@gmail.com", rndOtp);
-
   res.send("Welcome E-Commerce API Server");
 });
 
+// connect mongodb
 connectDB(MONGO_URI);
 // server asaah
 app.listen(PORT, () => {
