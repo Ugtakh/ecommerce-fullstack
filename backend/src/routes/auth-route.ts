@@ -6,6 +6,7 @@ import {
   verifyOtp,
   verifyPassword,
   forgetPassword,
+  updateUser,
 } from "../controllers/auth-controller";
 import { authentication } from "../middlewares/authentication";
 
@@ -17,5 +18,6 @@ router.route("/forget-password").post(forgetPassword);
 router.route("/verify-otp").post(verifyOtp);
 router.route("/signup").post(signup);
 router.route("/login").post(login);
+router.route("/user/:id").put(updateUser);
 
 export default router;

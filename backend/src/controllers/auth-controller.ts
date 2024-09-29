@@ -20,9 +20,10 @@ export const signup = async (req: Request, res: Response) => {
       email,
       password,
     });
-
+    console.log("SUCCESS", createdUser);
     res.status(201).json({ message: "create user is sucessfull" });
   } catch (error) {
+    console.log("ERROR", error);
     res.status(500).json({ message: "Server Error", error: error });
   }
 };
@@ -105,9 +106,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
   findUser.passwordResetTokenExpire = new Date(Date.now() + 10 * 60 * 1000);
   await findUser.save();
 
+  console.log("RT", resetToken);
   await sendEmail(
     email,
-    `<a href="http://localhost:3000/forgetpass/newpass?resettoken="${resetToken}"">Нууц үг сэргээх холбоос</a>`
+    `<a href="http://localhost:3000/forgetpass/newpass?resettoken=${resetToken}"&email=${email}>Нууц үг сэргээх холбоос</a>`
   );
   res.status(200).json({ message: "Нууц үг сэргээх имэйл илгээлээ" });
 };
@@ -134,4 +136,13 @@ export const verifyPassword = async (req: Request, res: Response) => {
   findUser.password = password;
   await findUser.save();
   res.status(200).json({ message: "Нууц үг  амжилттэй сэргээлээ" });
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+  res.status(200).json({
+    message: "Хэрэглэгчийн мэдээлэл амжилттай шинэчлэгдлээ.",
+    updatedUser,
+  });
 };

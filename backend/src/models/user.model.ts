@@ -49,10 +49,12 @@ const userSchema = new Schema<IUser>({
     default:
       "https://images.unsplash.com/photo-1640951613773-54706e06851d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
-  address: String,
+  address: {
+    type: String,
+  },
   otp: { type: String, default: "" },
   passwordResetToken: { type: String, default: "" },
-  passwordResetTokenExpire: { type: Date, default: undefined },
+  passwordResetTokenExpire: { type: Date, default: Date.now },
 
   updated_at: {
     type: Date,
