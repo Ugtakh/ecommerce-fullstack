@@ -6,6 +6,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import authRoute from "./routes/auth-route";
 import categoryRoute from "./routes/category-route";
+import productRoute from "./routes/product-route";
 
 const PORT: string = process.env.PORT || "";
 const MONGO_URI = process.env.MONGO_URI || "";
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/products", productRoute);
 
 // home request
 app.get("/", async (req: Request, res: Response) => {
