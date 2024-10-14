@@ -1,4 +1,3 @@
-// MONGOOSE => ODM => Object Data Mapping
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
 

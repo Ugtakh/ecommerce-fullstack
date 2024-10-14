@@ -1,13 +1,6 @@
 import { Request, Response } from "express";
 import Cart from "../models/cart.model";
 
-// export const getAllCategory = (req: Request, res: Response) => {
-//   Category.create(req.body);
-//   res.status(200).json({
-//     message: "All category is read successfully",
-//   });
-// };
-
 export const createCart = async (req: Request, res: Response) => {
 	const { userId, productId, totalAmount, quantity } = req.body;
 	try {
@@ -44,6 +37,51 @@ export const createCart = async (req: Request, res: Response) => {
 		console.log(error);
 		res.status(400).json({
 			message: "failed to read carts",
+		});
+	}
+};
+
+export const deleteCart = async (req: Request, res: Response) => {
+	const { userId, productId } = req.body;
+	try {
+		const findUserCart = await Cart.findOne({ user: userId });
+		// const deleteCart = await Cart.deleteOne(cartId);
+
+		if (!findUserCart) {
+			return res.status(404).json({
+				message: "Cart not found",
+			});
+		}
+
+		const productIndex = findUserCart.products.findIndex(
+			(item) => item.product.toString() === productId
+		);
+
+		if (productIndex === -1) {
+			return res.status(404).json({
+				message: "Product not found in cart",
+			});
+		}
+
+		findUserCart.products.splice(productIndex, 1);
+
+		if (findUserCart.products.length === 0) {
+			await Cart.deleteOne({ _id: findUserCart._id });
+			return res.status(200).json({
+				message: "Cart is empty and has been deleted",
+			});
+		}
+
+		const updatedCart = await findUserCart.save();
+
+		res.status(200).json({
+			message: "Product removed from cart",
+			updatedCart,
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(400).json({
+			message: "Failed to delete product from cart",
 		});
 	}
 };

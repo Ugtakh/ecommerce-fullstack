@@ -21,3 +21,30 @@ export const getProduct = async (req: Request, res: Response) => {
 		res.status(400).json({ message: "failed to get one product" });
   }
 }
+
+// try {
+//   const page = parseInt(req.query.page as string) || 1; // Current page number
+//   const limit = parseInt(req.query.limit as string) || 10; // Number of items per page
+//   const skip = (page - 1) * limit; // Number of items to skip
+
+//   // Fetch products with pagination
+//   const products = await Product.find()
+//     .skip(skip)
+//     .limit(limit)
+//     .sort({ createdAt: -1 }); // Sort by creation date, newest first
+
+//   // Get total count of products
+//   const totalProducts = await Product.countDocuments();
+
+//   // Calculate total pages
+//   const totalPages = Math.ceil(totalProducts / limit);
+
+//   res.json({
+//     products,
+//     currentPage: page,
+//     totalPages,
+//     totalProducts,
+//   });
+// } catch (error) {
+//   res.status(500).json({ message: 'Error fetching products', error });
+// }
