@@ -1,8 +1,25 @@
 import { Hero } from "@/components/home";
 import { ProductCard, FeaturedProductCard } from "@/components/product-card";
-import { products } from "@/lib/data";
+import { Product } from "@/lib/data";
+import { apiUrl } from "@/lib/utils";
+import axios from "axios";
 
-export default function Home() {
+interface ProductResponse {
+	products: Product[];
+}
+
+const getProductData = async () => {
+	try {
+		const response = await axios.get<ProductResponse>(`${apiUrl}/products`);
+		return response.data.products;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		throw new Error("Failed to fetch data");
+	}
+};
+
+export default async function Home() {
+	const products = await getProductData();
 	return (
 		<main>
 			<Hero />
@@ -11,21 +28,9 @@ export default function Home() {
 					return (
 						<>
 							{index === 6 || index === 7 ? (
-								<FeaturedProductCard
-									key={index}
-									name={product.name}
-									price={product.price}
-									image={product.image}
-									discount={product.discount}
-								/>
+								<FeaturedProductCard key={index} {...product} />
 							) : (
-								<ProductCard
-									key={index}
-									name={product.name}
-									price={product.price}
-									image={product.image}
-									discount={product.discount}
-								/>
+								<ProductCard key={index} {...product} />
 							)}
 						</>
 					);

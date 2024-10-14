@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { decodeToken } from "../utils/jwt";
 
-// interface IMyRequest extends Request {
-//   user: string | object;
-// }
-
 declare global {
   namespace Express {
     interface Request {
