@@ -45,7 +45,6 @@ export const deleteCart = async (req: Request, res: Response) => {
 	const { userId, productId } = req.body;
 	try {
 		const findUserCart = await Cart.findOne({ user: userId });
-		// const deleteCart = await Cart.deleteOne(cartId);
 
 		if (!findUserCart) {
 			return res.status(404).json({
@@ -64,13 +63,6 @@ export const deleteCart = async (req: Request, res: Response) => {
 		}
 
 		findUserCart.products.splice(productIndex, 1);
-
-		if (findUserCart.products.length === 0) {
-			await Cart.deleteOne({ _id: findUserCart._id });
-			return res.status(200).json({
-				message: "Cart is empty and has been deleted",
-			});
-		}
 
 		const updatedCart = await findUserCart.save();
 
