@@ -1,6 +1,6 @@
 import { Hero } from "@/components/home";
 import { ProductCard, FeaturedProductCard } from "@/components/product-card";
-import { Product } from "@/lib/data";
+import { Product } from "@/lib/types";
 import { apiUrl } from "@/lib/utils";
 import axios from "axios";
 
