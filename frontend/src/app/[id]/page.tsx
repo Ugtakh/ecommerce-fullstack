@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { useUser } from "@/provider/user-provider";
 
 const ProductDetail = () => {
+	const { user } = useUser();
 	const { id } = useParams();
 	const [product, setProduct] = useState<Product>({
 		_id: "",
@@ -30,6 +32,23 @@ const ProductDetail = () => {
 		} catch (error) {
 			console.error("Error fetching data:", error);
 			toast.error("Failed to get product detail");
+		}
+	};
+
+	const addToCart = async () => {
+		try {
+			const response = await axios.post(`${apiUrl}/carts/create-cart`, {
+				userId: user?._id,
+				productId: id,
+				quantity: productQuantity,
+			});
+
+			if (response.status === 200) {
+				toast.success("Successfully added to cart");
+			}
+		} catch (error) {
+			console.error("Error fetching data:", error);
+			toast.error("Failed to add to cart");
 		}
 	};
 
@@ -72,7 +91,7 @@ const ProductDetail = () => {
 						</p>
 					</div>
 					<p className="text-xl font-bold">{formattedPrice(product.price)}₮</p>
-					<Button>Сагсанд нэмэх</Button>
+					<Button onClick={addToCart}>Сагсанд нэмэх</Button>
 				</div>
 			</div>
 		</div>

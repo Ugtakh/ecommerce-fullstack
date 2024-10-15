@@ -21,3 +21,7 @@ export type Category = {
 	updatedAt?: Date;
 };
 
+export type Cart = {
+	product: Product;
+	quantity: number;
+}[];
