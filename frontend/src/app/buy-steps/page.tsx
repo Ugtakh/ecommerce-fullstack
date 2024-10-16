@@ -65,7 +65,6 @@ const BuySteps = () => {
 		getCartData();
 	}, []);
 
-	console.log("cartData", cartData);
 	return (
 		<div className="h-screen p-4">
 			{cartData.map((cartProduct) => {
@@ -104,7 +103,7 @@ const BuySteps = () => {
 										</p>
 									</div>
 									<p className="mt-1 mb-2 text-sm font-bold">
-										{product.price.toLocaleString()}
+										{(product.price * cartProduct.quantity).toLocaleString()}
 									</p>
 								</div>
 							</div>
