@@ -24,6 +24,7 @@ const productSchema = new Schema<IProduct>(
 			required: true,
 		},
 		description: {
+			
 			type: String,
 			default: "comment",
 		},

@@ -1,15 +1,6 @@
 import bcrypt from "bcrypt";
 import { model, Schema } from "mongoose";
 
-// interface IOrder {
-// 	products: [
-// 		{ product: Schema.Types.ObjectId },
-// 		quantity: number,
-// 		price: number
-//   ];
-//   totalAmount: number;
-
-// }
 interface IUser {
 	_id: Schema.Types.ObjectId;
 	firstname: String;
