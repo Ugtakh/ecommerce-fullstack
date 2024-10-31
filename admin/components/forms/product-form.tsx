@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,37 +24,36 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../ui/use-toast';
-import FileUpload from '../file-upload';
-const ImgSchema = z.object({
-  fileName: z.string(),
-  name: z.string(),
-  fileSize: z.number(),
-  size: z.number(),
-  fileKey: z.string(),
-  key: z.string(),
-  fileUrl: z.string(),
-  url: z.string()
-});
+// import FileUpload from '../file-upload';
+
+import { CldImage, CldUploadWidget } from 'next-cloudinary';
+
 export const IMG_MAX_LIMIT = 3;
+
 const formSchema = z.object({
   name: z
     .string()
     .min(3, { message: 'Product Name must be at least 3 characters' }),
-  imgUrl: z
-    .array(ImgSchema)
-    .max(IMG_MAX_LIMIT, { message: 'You can only add up to 3 images' })
-    .min(1, { message: 'At least one image must be added.' }),
   description: z
     .string()
     .min(3, { message: 'Product description must be at least 3 characters' }),
   price: z.coerce.number(),
-  category: z.string().min(1, { message: 'Please select a category' })
+  category: z.string().min(1, { message: 'Please select a category' }),
+  img: z.string()
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
+type FormDataType = {
+  name: string;
+  category: string;
+  description: string;
+  price: number;
+  size: string;
+  quantity: number;
+  images: (string | undefined)[];
+};
 
 interface ProductFormProps {
   initialData: any | null;
@@ -69,9 +67,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [imgLoading, setImgLoading] = useState(false);
   const title = initialData ? 'Edit product' : 'Create product';
   const description = initialData ? 'Edit a product.' : 'Add a new product';
   const toastMessage = initialData ? 'Product updated.' : 'Product created.';
@@ -83,7 +79,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         name: '',
         description: '',
         price: 0,
-        imgUrl: [],
+        img: 'url',
         category: ''
       };
 
@@ -92,20 +88,35 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     defaultValues
   });
 
+  const [formData, setFormData] = useState<FormDataType>({
+    name: 'Test-product',
+    category: '64a6f9ecf1a3cbe3f4f8c003',
+    description: 'A comfortable slim fit t-shirt',
+    price: 100_000,
+    size: 'XXL',
+    quantity: 5,
+    images: []
+  });
+
   const onSubmit = async (data: ProductFormValues) => {
+    console.log('LOG');
     try {
       setLoading(true);
-      if (initialData) {
-        // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
-      } else {
-        // const res = await axios.post(`/api/products/create-product`, data);
-        // console.log("product", res);
-      }
+
+      // await axios.post(`/api/products/edit-product/${initialData._id}`, data);
+      await fetch('http://localhost:8000/api/v1/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
       router.refresh();
-      router.push(`/dashboard/products`);
+      router.push(`/dashboard/product`);
       toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
+        variant: 'default',
+        title: 'Added products',
         description: 'There was a problem with your request.'
       });
     } catch (error: any) {
@@ -118,21 +129,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       setLoading(false);
     }
   };
-
-  const onDelete = async () => {
-    try {
-      setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      router.push(`/${params.storeId}/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
-  };
-
-  const triggerImgUrlValidation = () => form.trigger('imgUrl');
 
   return (
     <>
@@ -142,7 +138,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onConfirm={onDelete}
         loading={loading}
       /> */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
           <Button
@@ -151,10 +147,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             size="sm"
             onClick={() => setOpen(true)}
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="w-4 h-4" />
           </Button>
         )}
-      </div>
+      </div> */}
       <Separator />
       <Form {...form}>
         <form
@@ -163,17 +159,48 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         >
           <FormField
             control={form.control}
-            name="imgUrl"
+            name="img"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Images</FormLabel>
-                <FormControl>
-                  <FileUpload
-                    onChange={field.onChange}
-                    value={field.value}
-                    onRemove={field.onChange}
-                  />
-                </FormControl>
+                {/* <FileUpload
+                  onChange={field.onChange}
+                  value={field.value}
+                  onRemove={field.onChange}
+                /> */}
+
+                <CldImage
+                  width="100"
+                  height="100"
+                  src={formData.images[0]!}
+                  sizes="100vw"
+                  alt="Description of my image"
+                />
+
+                <div>
+                  <CldUploadWidget
+                    uploadPreset="adminecommerce"
+                    onSuccess={({ info }) => {
+                      // const s_u = (info as CloudinaryUploadWidgetInfo)
+                      //   .secure_url;
+                      if (typeof info !== 'string') {
+                        setFormData({
+                          ...formData,
+                          images: [...formData.images, info?.secure_url]
+                        });
+                      }
+                    }}
+                  >
+                    {({ open }) => {
+                      return (
+                        <Button className="ml-auto" onClick={() => open()}>
+                          My Upload an Image
+                        </Button>
+                      );
+                    }}
+                  </CldUploadWidget>
+                </div>
+
                 <FormMessage />
               </FormItem>
             )}
