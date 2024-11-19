@@ -1,13 +1,18 @@
 /** @type {import('next').NextConfig} */
+
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin();
+
 const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'i.ibb.co',
+        protocol: "https",
+        hostname: "i.ibb.co",
       },
     ],
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
